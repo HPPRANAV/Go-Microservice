@@ -65,9 +65,14 @@ type keyProduct struct{}
 func (p *Products) MiddleWareProductValidation(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(wtr http.ResponseWriter, res *http.Request) {
 		prod := &data.Product{}
+		/*err1 := prod.Validate()
+		if err1 != nil {
+			p.l.Println("Could not validate the product details we recieved!")
+			http.Error(wtr, fmt.Sprintf("The data we recieved is not in the appropriate format: %s", err1), http.StatusBadRequest)
+		}*/
 		err := prod.FromJSON(res.Body)
 		if err != nil {
-			http.Error(wtr, "Unable to unmarshal data", http.StatusBadRequest)
+			http.Error(wtr, fmt.Sprintf("Unable to unmarshal data: %s", err), http.StatusBadRequest)
 			return
 		}
 		ctx := context.WithValue(res.Context(), keyProduct{}, prod)
