@@ -17,10 +17,19 @@ func main() {
 	ph := handlers.NewProduct(log)
 
 	sm := mux.NewRouter()
-	getRouter := sm.Methods("GET").Subrouter
+	getRouter := sm.Methods("GET").Subrouter()
+	getRouter.HandleFunc("/", ph.GetProducts)
 
-	sm.Handle("/products", ph)
-	sm.Handle("/{id}", ph)
+	putRouter := sm.Methods("PUT").Subrouter()
+	putRouter.HandleFunc("/{id:[0-9]+}", ph.UpdateProduct)
+	putRouter.Use(ph.MiddleWareProductValidation)
+
+	postRouter := sm.Methods("POST").Subrouter()
+	postRouter.HandleFunc("/", ph.AddProduct)
+	postRouter.Use(ph.MiddleWareProductValidation)
+
+	//sm.Handle("/products", ph)
+	//sm.Handle("/{id}", ph)
 
 	server := &http.Server{
 		Addr:         ":9090",
