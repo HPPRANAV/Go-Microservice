@@ -1,0 +1,58 @@
+definitions:
+    Product:
+        properties:
+            SKU:
+                type: string
+            description:
+                type: string
+                x-go-name: Description
+            id:
+                format: int64
+                type: integer
+                x-go-name: ID
+            name:
+                type: string
+                x-go-name: Name
+            price:
+                format: float
+                type: number
+                x-go-name: Price
+        type: object
+        x-go-package: main.go/data
+info: {}
+paths:
+    /products:
+        get:
+            description: returns a list of products
+            operationId: listProducts
+            responses:
+                "200":
+                    $ref: '#/responses/productsResponse'
+            tags:
+                - products
+    /products/{id}:
+        delete:
+            description: Deletes a product with the given ID
+            operationId: deleteProduct
+            parameters:
+                - description: Id of the product to delete from database
+                  format: int64
+                  in: path
+                  name: id
+                  required: true
+                  type: integer
+                  x-go-name: ID
+            responses:
+                "201":
+                    $ref: '#/responses/productResponse'
+            tags:
+                - products
+responses:
+    productsResponse:
+        description: A list of products
+        headers:
+            body:
+                items:
+                    $ref: '#/definitions/Product'
+                type: array
+swagger: "2.0"

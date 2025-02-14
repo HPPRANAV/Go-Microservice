@@ -13,19 +13,18 @@ import (
 type Product struct {
 	ID          int     `json:"id"`
 	Name        string  `json:"name" validate:"required"`
-	Description string  `json:"Description"`
+	Description string  `json:"description"`
 	Price       float32 `json:"price" validate:"gt=0"`
-	SKU         string  `json:"sku" validate:"required,sku"`
+	SKU         string  `json:"SKU" validate:"required,SKU"`
 	CreatedOn   string  `json:"-"`
 	UpdatedOn   string  `json:"-"`
 	DeletedOn   string  `json:"-"`
 }
-
 type Products []*Product
 
 func (p *Product) Validate() error {
 	validate := validator.New()
-	validate.RegisterValidation("sku", validateSKU)
+	validate.RegisterValidation("SKU", validateSKU)
 	return validate.Struct(p)
 
 }
@@ -54,7 +53,16 @@ func AddProduct(prod *Product) {
 	prod.ID = getId()
 	productList = append(productList, prod)
 	fmt.Println(productList)
+}
 
+func DeleteProduct(id int) error {
+	_, pos, err := findProduct(id)
+	if err != nil {
+		return ErrorProductNotFound
+	}
+	productList = append(productList[:pos], productList[pos+1:]...)
+	displayProducts()
+	return nil
 }
 
 func getId() int {
